@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Professional;
+use App\Models\ContactMessage;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -27,5 +28,26 @@ class HomeController extends Controller
         ];
 
         return view('home.index', compact('categories', 'featuredProfessionals', 'stats'));
+    }
+
+    public function contact()
+    {
+        return view('home.contact');
+    }
+
+    public function submitContact(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'min:3', 'regex:/^[a-zA-Z\s]+$/'],
+            'email' => ['required', 'string', 'email'],
+            'subject' => ['required', 'string', 'min:5', 'max:150'],
+            'message' => ['required', 'string', 'min:10', 'max:2000'],
+        ], [
+            'name.regex' => 'The name may only contain letters and spaces.',
+        ]);
+
+        ContactMessage::create($validated);
+
+        return redirect()->route('contact')->with('success', 'Your contact message has been sent successfully! We will get back to you shortly.');
     }
 }

@@ -17,6 +17,9 @@
                 <a href="{{ route('professionals.index') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200 {{ request()->routeIs('professionals.*') ? 'text-indigo-600 bg-indigo-50' : '' }}">
                     {{ __('messages.professionals') }}
                 </a>
+                <a href="{{ route('contact') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-all duration-200 {{ request()->routeIs('contact') ? 'text-indigo-600 bg-indigo-50' : '' }}">
+                    {{ __('messages.contact') }}
+                </a>
 
                 @auth
                     @if(auth()->user()->role === 'user')
@@ -98,10 +101,10 @@
             </button>
         </div>
 
-        <!-- Mobile menu -->
         <div x-show="open" x-transition x-cloak class="md:hidden pb-4 border-t border-gray-100 pt-4 space-y-1">
             <a href="{{ route('home') }}" class="block px-4 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50">Home</a>
             <a href="{{ route('professionals.index') }}" class="block px-4 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50">Professionals</a>
+            <a href="{{ route('contact') }}" class="block px-4 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50 {{ request()->routeIs('contact') ? 'text-indigo-600 bg-indigo-50' : '' }}">{{ __('messages.contact') }}</a>
             @auth
                 @if(auth()->user()->role === 'user')
                     <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-indigo-50">Dashboard</a>

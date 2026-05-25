@@ -4,6 +4,7 @@ return [
     // Navigation
     'home'           => 'होम',
     'professionals'  => 'विशेषज्ञ',
+    'contact'        => 'संपर्क करें',
     'my_appointments'=> 'मेरी अपॉइंटमेंट',
     'dashboard'      => 'डैशबोर्ड',
     'login'          => 'लॉगिन',

@@ -34,7 +34,7 @@
                     <li><a href="#" class="hover:text-indigo-400 transition-colors">Help Center</a></li>
                     <li><a href="#" class="hover:text-indigo-400 transition-colors">Privacy Policy</a></li>
                     <li><a href="#" class="hover:text-indigo-400 transition-colors">Terms of Service</a></li>
-                    <li><a href="#" class="hover:text-indigo-400 transition-colors">Contact Us</a></li>
+                    <li><a href="{{ route('contact') }}" class="hover:text-indigo-400 transition-colors">Contact Us</a></li>
                 </ul>
             </div>
         </div>

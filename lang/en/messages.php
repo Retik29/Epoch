@@ -4,6 +4,7 @@ return [
     // Navigation
     'home'           => 'Home',
     'professionals'  => 'Professionals',
+    'contact'        => 'Contact Us',
     'my_appointments'=> 'My Appointments',
     'dashboard'      => 'Dashboard',
     'login'          => 'Login',
