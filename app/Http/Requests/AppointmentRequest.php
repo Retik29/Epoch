@@ -15,7 +15,7 @@ class AppointmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'professional_id'  => ['required', 'integer', 'exists:professionals,id'],
+            'professional_id'  => ['required', 'string', 'exists:professionals,_id'],
             'appointment_date' => ['required', 'date', 'after:today'],
             'time_slot'        => [
                 'required',

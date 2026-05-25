@@ -46,6 +46,14 @@ class UserSeeder extends Seeder
              'experience_years' => 7, 'location' => 'Chennai', 'consultation_fee' => 600, 'specializations' => ['CBT', 'Anxiety', 'Depression']],
         ];
 
+        $photoMapping = [
+            'Dr. Priya Sharma' => 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=600&auto=format&fit=crop',
+            'Prof. Rahul Mehta' => 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=600&auto=format&fit=crop',
+            'Adv. Sunita Kapoor' => 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop',
+            'Mr. Arun Verma' => 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=600&auto=format&fit=crop',
+            'Dr. Meera Nair' => 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600&auto=format&fit=crop',
+        ];
+
         foreach ($professionalsData as $data) {
             $category = $categories->firstWhere('slug', $data['category']);
             if (!$category) continue;
@@ -62,6 +70,7 @@ class UserSeeder extends Seeder
                 'bio'              => $data['bio'],
                 'experience_years' => $data['experience_years'],
                 'location'         => $data['location'],
+                'photo'            => $photoMapping[$data['name']] ?? null,
                 'consultation_fee' => $data['consultation_fee'],
                 'session_duration' => 30,
                 'is_active'        => true,
@@ -81,29 +90,6 @@ class UserSeeder extends Seeder
                     'is_active'  => true,
                 ]);
             }
-        }
-
-        // 3. Regular users
-        $usersData = [
-            ['name' => 'Ananya Gupta',   'email' => 'ananya@example.com'],
-            ['name' => 'Rohit Patel',    'email' => 'rohit@example.com'],
-            ['name' => 'Kavya Reddy',    'email' => 'kavya@example.com'],
-            ['name' => 'Vikram Singh',   'email' => 'vikram@example.com'],
-            ['name' => 'Sonal Joshi',    'email' => 'sonal@example.com'],
-            ['name' => 'Arjun Kumar',    'email' => 'arjun@example.com'],
-            ['name' => 'Divya Sharma',   'email' => 'divya@example.com'],
-            ['name' => 'Manish Tiwari',  'email' => 'manish@example.com'],
-            ['name' => 'Pooja Mishra',   'email' => 'pooja@example.com'],
-            ['name' => 'Varun Chopra',   'email' => 'varun@example.com'],
-        ];
-
-        foreach ($usersData as $userData) {
-            User::firstOrCreate(['email' => $userData['email']], [
-                'name'     => $userData['name'],
-                'password' => Hash::make('password'),
-                'role'     => 'user',
-                'phone'    => '+91-' . rand(8000000000, 8999999999),
-            ]);
         }
     }
 }

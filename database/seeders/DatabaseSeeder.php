@@ -12,7 +12,6 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             UserSeeder::class,
             ProfessionalSeeder::class,
-            AppointmentSeeder::class,
         ]);
     }
 }

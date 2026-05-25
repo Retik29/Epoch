@@ -107,8 +107,10 @@
             @foreach($featuredProfessionals as $professional)
                 <div class="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 shadow-sm">
                     <div class="relative">
-                        <img src="{{ $professional->photo_url }}" alt="{{ $professional->user->name }}"
-                             class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500">
+                        <a href="{{ route('professionals.show', $professional) }}" class="block overflow-hidden">
+                            <img src="{{ $professional->photo_url }}" alt="{{ $professional->user->name }}"
+                                 class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500">
+                        </a>
                         <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-2 py-1 flex items-center gap-1 shadow-sm">
                             <i data-lucide="star" class="w-3 h-3 text-amber-400 fill-amber-400"></i>
                             <span class="text-xs font-bold text-gray-700">{{ $professional->rating }}</span>
@@ -121,7 +123,9 @@
                         </div>
                     </div>
                     <div class="p-4">
-                        <h3 class="font-bold text-gray-900 text-base group-hover:text-indigo-600 transition-colors">{{ $professional->user->name }}</h3>
+                        <a href="{{ route('professionals.show', $professional) }}" class="hover:underline">
+                            <h3 class="font-bold text-gray-900 text-base group-hover:text-indigo-600 transition-colors">{{ $professional->user->name }}</h3>
+                        </a>
                         <div class="flex items-center gap-1 text-xs text-gray-500 mt-1">
                             <i data-lucide="map-pin" class="w-3 h-3"></i>
                             {{ $professional->location }}

@@ -23,7 +23,7 @@ Route::post('/contact-send', [ContactController::class, 'send'])->name('contact.
 
 Route::get('/professionals', [ProfessionalController::class, 'index'])->name('professionals.index');
 Route::get('/professionals/{professional}', [ProfessionalController::class, 'show'])
-    ->where('professional', '[0-9]+')
+    ->where('professional', '[a-fA-F0-9]{24}')
     ->name('professionals.show');
 
 // Locale switcher
@@ -58,13 +58,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
     Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
     Route::get('/appointments/{appointment}', [AppointmentController::class, 'show'])
-        ->where('appointment', '[0-9]+')
+        ->where('appointment', '[a-fA-F0-9]{24}')
         ->name('appointments.show');
     Route::patch('/appointments/{appointment}/cancel', [AppointmentController::class, 'cancel'])
-        ->where('appointment', '[0-9]+')
+        ->where('appointment', '[a-fA-F0-9]{24}')
         ->name('appointments.cancel');
     Route::delete('/appointments/{appointment}', [AppointmentController::class, 'destroy'])
-        ->where('appointment', '[0-9]+')
+        ->where('appointment', '[a-fA-F0-9]{24}')
         ->name('appointments.destroy');
 
     // ─── Payment Routes ──────────────────────────────────────────────────────
@@ -81,13 +81,13 @@ Route::middleware(['auth', 'professional'])->prefix('professional')->name('profe
 
     // Appointment management
     Route::patch('/appointments/{appointment}/confirm', [ProfessionalDashboardController::class, 'confirm'])
-        ->where('appointment', '[0-9]+')
+        ->where('appointment', '[a-fA-F0-9]{24}')
         ->name('appointments.confirm');
     Route::patch('/appointments/{appointment}/reject', [ProfessionalDashboardController::class, 'reject'])
-        ->where('appointment', '[0-9]+')
+        ->where('appointment', '[a-fA-F0-9]{24}')
         ->name('appointments.reject');
     Route::patch('/appointments/{appointment}/complete', [ProfessionalDashboardController::class, 'complete'])
-        ->where('appointment', '[0-9]+')
+        ->where('appointment', '[a-fA-F0-9]{24}')
         ->name('appointments.complete');
 
     // Profile management

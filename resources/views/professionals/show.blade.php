@@ -57,16 +57,26 @@
                         </span>
                     </div>
 
-                    @if($professional->specializations)
-                        <div class="mt-4">
-                            <p class="text-xs font-semibold text-gray-500 uppercase mb-2">Specializations</p>
-                            <div class="flex flex-wrap gap-1.5">
-                                @foreach($professional->specializations as $spec)
-                                    <span class="text-xs bg-indigo-50 text-indigo-700 border border-indigo-100 px-2 py-1 rounded-full">{{ $spec }}</span>
-                                @endforeach
-                            </div>
+                    <div class="mt-4 pt-4 border-t border-gray-100 space-y-4">
+                        <div>
+                            <p class="text-xs font-semibold text-gray-500 uppercase mb-1.5">Primary Specialty</p>
+                            <span class="text-sm font-semibold px-3 py-1 rounded-full text-white shadow-sm inline-block"
+                                  style="background-color: {{ $professional->category->color }}">
+                                {{ $professional->category->name }}
+                            </span>
                         </div>
-                    @endif
+
+                        @if($professional->specializations && count($professional->specializations) > 0)
+                            <div>
+                                <p class="text-xs font-semibold text-gray-500 uppercase mb-2">Specializations & Expertise</p>
+                                <div class="flex flex-wrap gap-1.5">
+                                    @foreach($professional->specializations as $spec)
+                                        <span class="text-xs bg-indigo-50 text-indigo-700 border border-indigo-100 px-2 py-1 rounded-full">{{ $spec }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
 
                     <div class="mt-4">
                         <p class="text-xs font-semibold text-gray-500 uppercase mb-2">About</p>
@@ -83,7 +93,7 @@
             <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6" x-data="bookingApp()">
                 <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
                     <i data-lucide="calendar" class="w-5 h-5 text-indigo-500"></i>
-                    Choose Date & Time
+                    Book Consultation
                 </h2>
 
                 <!-- Date Tabs -->
@@ -131,7 +141,7 @@
                 <!-- Booking Form -->
                 <div x-show="selectedDate && selectedSlot" x-transition class="mt-6 pt-6 border-t border-gray-100">
                     @auth
-                        <form action="{{ route('payments.initiate') }}" method="POST" id="booking-form">
+                        <form action="{{ route('appointments.store') }}" method="POST" id="booking-form">
                             @csrf
                             <input type="hidden" name="professional_id" value="{{ $professional->id }}">
                             <input type="hidden" name="appointment_date" id="f-date" x-ref="dateInput">
@@ -163,10 +173,23 @@
                             <button type="button" id="book-btn"
                                     @click="doSubmit()"
                                     :disabled="!selectedDate || !selectedSlot || submitting"
-                                    :class="(!selectedDate || !selectedSlot) ? 'opacity-50 cursor-not-allowed' : 'hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl'"
+                                    :class="(!selectedDate || !selectedSlot || submitting) ? 'opacity-50 cursor-not-allowed' : 'hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl'"
                                     class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 group">
-                                <i data-lucide="lock" class="w-5 h-5"></i>
-                                <span x-text="submitting ? 'Redirecting...' : 'Proceed to Payment'">Proceed to Payment</span>
+                                <template x-if="submitting">
+                                    <span class="inline-flex items-center gap-2">
+                                        <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                        </svg>
+                                        Processing Payment...
+                                    </span>
+                                </template>
+                                <template x-if="!submitting">
+                                    <span class="inline-flex items-center gap-2">
+                                        <i data-lucide="lock" class="w-5 h-5"></i>
+                                        Proceed to Payment
+                                    </span>
+                                </template>
                             </button>
 
                             <p class="text-center text-xs text-gray-400 mt-2 flex items-center justify-center gap-1">
@@ -244,7 +267,11 @@
                 this.$refs.dateInput.value = this.selectedDate;
                 this.$refs.slotInput.value = this.selectedSlot;
                 this.submitting = true;
-                document.getElementById('booking-form').submit();
+                
+                // 2.5s mock payment processing delay before submitting
+                setTimeout(() => {
+                    document.getElementById('booking-form').submit();
+                }, 2500);
             }
         }
     }

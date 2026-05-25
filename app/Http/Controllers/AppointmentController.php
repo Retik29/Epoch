@@ -37,13 +37,17 @@ class AppointmentController extends Controller
         $professional = Professional::findOrFail($request->professional_id);
 
         $appointment = Appointment::create([
-            'user_id'          => Auth::id(),
-            'professional_id'  => $request->professional_id,
-            'appointment_date' => $request->appointment_date,
-            'time_slot'        => $request->time_slot,
-            'notes'            => $request->notes,
-            'fee'              => $professional->consultation_fee,
-            'status'           => 'pending',
+            'user_id'             => Auth::id(),
+            'professional_id'     => $request->professional_id,
+            'appointment_date'    => $request->appointment_date,
+            'time_slot'           => $request->time_slot,
+            'notes'               => $request->notes,
+            'fee'                 => $professional->consultation_fee,
+            'status'              => 'pending',
+            'payment_status'      => 'paid',
+            'razorpay_payment_id' => 'demo_pay_' . uniqid(),
+            'razorpay_signature'  => 'demo_sig_' . uniqid(),
+            'razorpay_order_id'   => 'demo_order_' . uniqid(),
         ]);
 
         // Eager-load relationships needed by the mail template

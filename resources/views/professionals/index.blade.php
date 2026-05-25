@@ -114,8 +114,10 @@
                     @foreach($professionals as $professional)
                         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 group">
                             <div class="relative">
-                                <img src="{{ $professional->photo_url }}" alt="{{ $professional->user->name }}"
-                                     class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500">
+                                <a href="{{ route('professionals.show', $professional) }}" class="block overflow-hidden">
+                                    <img src="{{ $professional->photo_url }}" alt="{{ $professional->user->name }}"
+                                         class="w-full h-44 object-cover group-hover:scale-105 transition-transform duration-500">
+                                </a>
                                 <div class="absolute top-3 left-3">
                                     <span class="text-xs font-medium px-2 py-1 rounded-full text-white shadow-sm"
                                           style="background-color: {{ $professional->category->color }}">
@@ -128,7 +130,9 @@
                                 </div>
                             </div>
                             <div class="p-4">
-                                <h3 class="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $professional->user->name }}</h3>
+                                <a href="{{ route('professionals.show', $professional) }}" class="hover:underline">
+                                    <h3 class="font-bold text-gray-900 group-hover:text-indigo-600 transition-colors">{{ $professional->user->name }}</h3>
+                                </a>
                                 <div class="flex items-center gap-1 text-xs text-gray-500 mt-1">
                                     <i data-lucide="map-pin" class="w-3 h-3 flex-shrink-0"></i>
                                     <span class="truncate">{{ $professional->location }}</span>

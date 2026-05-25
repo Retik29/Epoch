@@ -81,15 +81,7 @@
                 </p>
             </div>
 
-            <!-- Demo credentials -->
-            <div class="mt-4 bg-indigo-50 rounded-xl p-4">
-                <p class="text-xs font-semibold text-indigo-700 mb-2">Demo Credentials</p>
-                <div class="space-y-1 text-xs text-indigo-600">
-                    <p>Admin: <strong>admin@epoch.com</strong> / password</p>
-                    <p>Professional: <strong>priya@epoch.com</strong> / password</p>
-                    <p>User: <strong>ananya@example.com</strong> / password</p>
-                </div>
-            </div>
+
         </div>
     </div>
 </div>

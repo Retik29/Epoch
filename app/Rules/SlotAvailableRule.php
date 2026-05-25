@@ -9,7 +9,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 class SlotAvailableRule implements ValidationRule
 {
     public function __construct(
-        protected ?int $professionalId,
+        protected ?string $professionalId,
         protected ?string $date
     ) {}
 

@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 // Public API routes
 Route::get('/professionals', [ProfessionalApiController::class, 'index']);
 Route::get('/professionals/{professional}', [ProfessionalApiController::class, 'show'])
-    ->where('professional', '[0-9]+');
+    ->where('professional', '[a-fA-F0-9]{24}');
 
 // Authenticated API routes (Sanctum)
 Route::middleware('auth:sanctum')->group(function () {
