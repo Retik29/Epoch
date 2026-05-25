@@ -229,8 +229,6 @@ class Professional extends Model
             ]);
             
             $pro = new Professional([
-                'id' => $item['id'],
-                '_id' => $item['id'],
                 'experience_years' => $item['experience'],
                 'location' => $item['location'],
                 'consultation_fee' => $item['fee'],
@@ -242,6 +240,8 @@ class Professional extends Model
                 'bio' => $item['bio'],
                 'is_active' => true
             ]);
+            $pro->id = $item['id'];
+            $pro->_id = $item['id'];
             $pro->setRelation('user', $user);
             $pro->setRelation('category', $category);
             
