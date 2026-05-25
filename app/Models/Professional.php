@@ -144,4 +144,120 @@ class Professional extends Model
         $count = $this->reviews()->count();
         $this->update(['rating' => round($avg, 2), 'total_reviews' => $count]);
     }
+
+    public static function getMockProfessionals(): \Illuminate\Support\Collection
+    {
+        $data = [
+            [
+                'id' => '6a148082d5aa4c236e0f5766',
+                'name' => 'Dr. Arjun Nair',
+                'category' => ['slug' => 'doctors', 'name' => 'Doctors', 'color' => '#ef4444', 'icon' => 'activity'],
+                'experience' => 12,
+                'location' => 'Mumbai, Maharashtra',
+                'fee' => 800,
+                'photo' => 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=600&auto=format&fit=crop',
+                'specializations' => ['Cardiology', 'Hypertension', 'Preventive Care'],
+                'bio' => 'Experienced cardiologist with over 12 years in clinical practice. Committed to providing high-quality, personalized heart care to every patient.'
+            ],
+            [
+                'id' => '6a148082d5aa4c236e0f576d',
+                'name' => 'Dr. Pooja Pillai',
+                'category' => ['slug' => 'doctors', 'name' => 'Doctors', 'color' => '#ef4444', 'icon' => 'activity'],
+                'experience' => 9,
+                'location' => 'Delhi',
+                'fee' => 600,
+                'photo' => 'https://images.unsplash.com/photo-1594824813573-246434de83fb?q=80&w=600&auto=format&fit=crop',
+                'specializations' => ['Pediatrics', 'Child Wellness', 'Nutrition'],
+                'bio' => 'Dedicated pediatrician specializing in child growth, nutrition, and preventive immunizations.'
+            ],
+            [
+                'id' => '6a148082d5aa4c236e0f5774',
+                'name' => 'Prof. Sameer Khan',
+                'category' => ['slug' => 'tutors', 'name' => 'Tutors', 'color' => '#3b82f6', 'icon' => 'book-open'],
+                'experience' => 10,
+                'location' => 'Bangalore, Karnataka',
+                'fee' => 500,
+                'photo' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop',
+                'specializations' => ['Mathematics', 'Physics', 'IIT-JEE Prep'],
+                'bio' => 'IIT alumnus offering expert tutoring in Mathematics and Physics for senior secondary and competitive entrance exams.'
+            ],
+            [
+                'id' => '6a148082d5aa4c236e0f577b',
+                'name' => 'Adv. Neha Desai',
+                'category' => ['slug' => 'lawyers', 'name' => 'Lawyers', 'color' => '#f59e0b', 'icon' => 'scale'],
+                'experience' => 15,
+                'location' => 'Pune, Maharashtra',
+                'fee' => 1200,
+                'photo' => 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop',
+                'specializations' => ['Corporate Law', 'Intellectual Property', 'Contracts'],
+                'bio' => 'Senior legal counsel helping startups and corporate clients navigate commercial law, contracts, and IP protection.'
+            ],
+            [
+                'id' => '6a148082d5aa4c236e0f5782',
+                'name' => 'Mr. Kiran Rao',
+                'category' => ['slug' => 'consultants', 'name' => 'Consultants', 'color' => '#10b981', 'icon' => 'briefcase'],
+                'experience' => 8,
+                'location' => 'Hyderabad, Telangana',
+                'fee' => 1000,
+                'photo' => 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=600&auto=format&fit=crop',
+                'specializations' => ['Business Strategy', 'Financial Planning', 'Scaling'],
+                'bio' => 'Strategy consultant focused on helping SMEs streamline operations, improve profitability, and scale up.'
+            ],
+            [
+                'id' => '6a148083d5aa4c236e0f5789',
+                'name' => 'Dr. Anjali Singh',
+                'category' => ['slug' => 'therapists', 'name' => 'Therapists', 'color' => '#8b5cf6', 'icon' => 'heart'],
+                'experience' => 7,
+                'location' => 'Chennai, Tamil Nadu',
+                'fee' => 750,
+                'photo' => 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=600&auto=format&fit=crop',
+                'specializations' => ['Cognitive Therapy', 'Anxiety', 'Stress Management'],
+                'bio' => 'Clinical therapist specializing in cognitive behavioral therapy (CBT), anxiety management, and mindfulness practices.'
+            ]
+        ];
+
+        return collect($data)->map(function ($item) {
+            $user = new User([
+                'name' => $item['name'],
+                'email' => strtolower(str_replace([' ', '.'], ['_', ''], $item['name'])) . '@epoch.com',
+            ]);
+            $category = new Category([
+                'slug' => $item['category']['slug'],
+                'name' => $item['category']['name'],
+                'color' => $item['category']['color'],
+                'icon' => $item['category']['icon']
+            ]);
+            
+            $pro = new Professional([
+                'id' => $item['id'],
+                '_id' => $item['id'],
+                'experience_years' => $item['experience'],
+                'location' => $item['location'],
+                'consultation_fee' => $item['fee'],
+                'session_duration' => 30,
+                'rating' => 4.8,
+                'total_reviews' => 24,
+                'photo' => $item['photo'],
+                'specializations' => $item['specializations'],
+                'bio' => $item['bio'],
+                'is_active' => true
+            ]);
+            $pro->setRelation('user', $user);
+            $pro->setRelation('category', $category);
+            
+            $avails = collect();
+            for ($day = 1; $day <= 5; $day++) {
+                $avails->push(new Availability([
+                    'day_of_week' => $day,
+                    'start_time' => '09:00',
+                    'end_time' => '17:00',
+                    'is_active' => true
+                ]));
+            }
+            $pro->setRelation('availabilities', $avails);
+            $pro->setRelation('reviews', collect());
+            
+            return $pro;
+        });
+    }
 }

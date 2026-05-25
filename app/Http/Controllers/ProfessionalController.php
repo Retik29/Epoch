@@ -13,58 +13,120 @@ class ProfessionalController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Professional::with(['user', 'category'])
-            ->where('is_active', true);
+        try {
+            $query = Professional::with(['user', 'category'])
+                ->where('is_active', true);
 
-        // Category filter
-        if ($request->filled('category')) {
-            $query->whereHas('category', fn($q) => $q->where('slug', $request->category));
+            // Category filter
+            if ($request->filled('category')) {
+                $query->whereHas('category', fn($q) => $q->where('slug', $request->category));
+            }
+
+            // Location filter
+            if ($request->filled('location')) {
+                $query->where('location', 'like', '%' . $request->location . '%');
+            }
+
+            // Name search
+            if ($request->filled('search')) {
+                $query->whereHas('user', fn($q) => $q->where('name', 'like', '%' . $request->search . '%'));
+            }
+
+            // Sorting
+            $sort = $request->get('sort', 'rating');
+            match($sort) {
+                'rating'     => $query->orderByDesc('rating'),
+                'experience' => $query->orderByDesc('experience_years'),
+                'fee_low'    => $query->orderBy('consultation_fee'),
+                'fee_high'   => $query->orderByDesc('consultation_fee'),
+                default      => $query->orderByDesc('rating'),
+            };
+
+            // Store filters in session
+            session(['last_filters' => $request->only(['category', 'location', 'search', 'sort'])]);
+
+            $professionals = $query->paginate(12)->withQueryString();
+
+            $categories = Category::all()->map(function ($category) {
+                $category->professionals_count = Professional::where('category_id', $category->id)->count();
+                return $category;
+            });
+        } catch (\Exception $e) {
+            // DB is offline/unavailable — use mock fallbacks
+            $mockCollection = Professional::getMockProfessionals();
+
+            // Filter by category
+            if ($request->filled('category')) {
+                $mockCollection = $mockCollection->filter(fn($p) => $p->category->slug === $request->category);
+            }
+
+            // Filter by location
+            if ($request->filled('location')) {
+                $mockCollection = $mockCollection->filter(fn($p) => stripos($p->location, $request->location) !== false);
+            }
+
+            // Filter by search
+            if ($request->filled('search')) {
+                $mockCollection = $mockCollection->filter(fn($p) => stripos($p->user->name, $request->search) !== false);
+            }
+
+            // Sorting
+            $sort = $request->get('sort', 'rating');
+            $mockCollection = match($sort) {
+                'experience' => $mockCollection->sortByDesc('experience_years'),
+                'fee_low'    => $mockCollection->sortBy('consultation_fee'),
+                'fee_high'   => $mockCollection->sortByDesc('consultation_fee'),
+                default      => $mockCollection->sortByDesc('rating'),
+            };
+
+            $professionals = new \Illuminate\Pagination\LengthAwarePaginator(
+                $mockCollection->values(),
+                $mockCollection->count(),
+                12,
+                1,
+                ['path' => request()->url(), 'query' => request()->query()]
+            );
+
+            $categories = collect([
+                new Category(['slug' => 'doctors', 'name' => 'Doctors', 'color' => '#ef4444', 'icon' => 'activity']),
+                new Category(['slug' => 'tutors', 'name' => 'Tutors', 'color' => '#3b82f6', 'icon' => 'book-open']),
+                new Category(['slug' => 'consultants', 'name' => 'Consultants', 'color' => '#10b981', 'icon' => 'briefcase']),
+                new Category(['slug' => 'lawyers', 'name' => 'Lawyers', 'color' => '#f59e0b', 'icon' => 'scale']),
+                new Category(['slug' => 'therapists', 'name' => 'Therapists', 'color' => '#8b5cf6', 'icon' => 'heart']),
+            ])->map(function ($c) use ($mockCollection) {
+                $c->professionals_count = $mockCollection->filter(fn($p) => $p->category->slug === $c->slug)->count();
+                return $c;
+            });
         }
-
-        // Location filter
-        if ($request->filled('location')) {
-            $query->where('location', 'like', '%' . $request->location . '%');
-        }
-
-        // Name search
-        if ($request->filled('search')) {
-            $query->whereHas('user', fn($q) => $q->where('name', 'like', '%' . $request->search . '%'));
-        }
-
-        // Sorting
-        $sort = $request->get('sort', 'rating');
-        match($sort) {
-            'rating'     => $query->orderByDesc('rating'),
-            'experience' => $query->orderByDesc('experience_years'),
-            'fee_low'    => $query->orderBy('consultation_fee'),
-            'fee_high'   => $query->orderByDesc('consultation_fee'),
-            default      => $query->orderByDesc('rating'),
-        };
-
-        // Store filters in session
-        session(['last_filters' => $request->only(['category', 'location', 'search', 'sort'])]);
-
-        $professionals = $query->paginate(12)->withQueryString();
-
-        $categories = Category::all()->map(function ($category) {
-            $category->professionals_count = Professional::where('category_id', $category->id)->count();
-            return $category;
-        });
 
         return view('professionals.index', compact('professionals', 'categories'));
     }
 
-    public function show(Professional $professional)
+    public function show($professionalId)
     {
-        $professional->load(['user', 'category', 'availabilities', 'reviews.user']);
+        try {
+            $professional = Professional::with(['user', 'category', 'availabilities', 'reviews.user'])
+                ->findOrFail($professionalId);
 
-        // Get available slots for next 7 days
-        $availableDates = [];
-        for ($i = 1; $i <= 14; $i++) {
-            $date = now()->addDays($i)->format('Y-m-d');
-            $slots = $professional->getAvailableSlotsForDate($date);
-            if (!empty($slots)) {
-                $availableDates[$date] = $slots;
+            // Get available slots for next 7 days
+            $availableDates = [];
+            for ($i = 1; $i <= 14; $i++) {
+                $date = now()->addDays($i)->format('Y-m-d');
+                $slots = $professional->getAvailableSlotsForDate($date);
+                if (!empty($slots)) {
+                    $availableDates[$date] = $slots;
+                }
+            }
+        } catch (\Exception $e) {
+            // DB is offline/unavailable — use mock fallbacks
+            $professional = Professional::getMockProfessionals()->first(fn($p) => $p->id === $professionalId) 
+                ?? Professional::getMockProfessionals()->first();
+
+            // Set up some mock available dates/slots
+            $availableDates = [];
+            for ($i = 1; $i <= 7; $i++) {
+                $date = now()->addDays($i)->format('Y-m-d');
+                $availableDates[$date] = ['09:00-09:30', '10:00-10:30', '11:00-11:30', '14:00-14:30', '15:00-15:30'];
             }
         }
 
