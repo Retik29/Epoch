@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfessionalController;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 // ─── Public Routes ───────────────────────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
 Route::get('/professionals', [ProfessionalController::class, 'index'])->name('professionals.index');
 Route::get('/professionals/{professional}', [ProfessionalController::class, 'show'])

@@ -196,4 +196,161 @@
 </section>
 @endguest
 
+{{-- Contact Section --}}
+<section id="contact" class="relative bg-gradient-to-br from-gray-900 via-indigo-950 to-gray-900 py-24 overflow-hidden">
+
+    {{-- Decorative blobs --}}
+    <div class="absolute inset-0 pointer-events-none overflow-hidden">
+        <div class="absolute -top-32 -left-32 w-96 h-96 bg-indigo-600 rounded-full opacity-10 blur-3xl"></div>
+        <div class="absolute bottom-0 right-0 w-80 h-80 bg-purple-600 rounded-full opacity-10 blur-3xl"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-900 rounded-full opacity-20 blur-3xl"></div>
+    </div>
+
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        {{-- Section Header --}}
+        <div class="text-center mb-14">
+            <span class="inline-flex items-center gap-2 bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 text-xs font-semibold px-4 py-1.5 rounded-full mb-4">
+                <i data-lucide="mail" class="w-3.5 h-3.5"></i>
+                Get In Touch
+            </span>
+            <h2 class="text-4xl sm:text-5xl font-extrabold text-white mb-4">
+                We'd love to <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">hear from you</span>
+            </h2>
+            <p class="text-gray-400 max-w-xl mx-auto text-base leading-relaxed">
+                Have a question, suggestion, or need support? Drop us a message and we'll get back to you as soon as possible.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-10 items-start">
+
+            {{-- Left Info Column --}}
+            <div class="lg:col-span-2 space-y-6">
+
+                {{-- Info Cards --}}
+                @foreach([
+                    ['icon' => 'mail', 'color' => 'indigo', 'title' => 'Email Us', 'value' => 'ritiknyadavofficial614@gmail.com', 'sub' => 'We reply within 24 hours'],
+                    ['icon' => 'map-pin', 'color' => 'purple', 'title' => 'Location', 'value' => 'India', 'sub' => 'Serving clients nationwide'],
+                    ['icon' => 'clock', 'color' => 'pink', 'title' => 'Support Hours', 'value' => 'Mon – Fri, 9am – 6pm', 'sub' => 'IST (Indian Standard Time)'],
+                ] as $info)
+                <div class="flex items-start gap-4 bg-white/5 border border-white/10 rounded-2xl p-5 hover:bg-white/10 transition-colors duration-300">
+                    <div class="flex-shrink-0 w-11 h-11 rounded-xl bg-{{ $info['color'] }}-500/20 flex items-center justify-center">
+                        <i data-lucide="{{ $info['icon'] }}" class="w-5 h-5 text-{{ $info['color'] }}-400"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-0.5">{{ $info['title'] }}</p>
+                        <p class="text-white font-semibold text-sm leading-snug">{{ $info['value'] }}</p>
+                        <p class="text-gray-500 text-xs mt-0.5">{{ $info['sub'] }}</p>
+                    </div>
+                </div>
+                @endforeach
+
+                {{-- Social Links --}}
+                <div class="pt-2">
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Connect with us</p>
+                    <div class="flex gap-3">
+                        @foreach([
+                            ['icon' => 'github', 'href' => '#', 'label' => 'GitHub'],
+                            ['icon' => 'twitter', 'href' => '#', 'label' => 'Twitter'],
+                            ['icon' => 'linkedin', 'href' => '#', 'label' => 'LinkedIn'],
+                        ] as $social)
+                        <a href="{{ $social['href'] }}" aria-label="{{ $social['label'] }}"
+                           class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-indigo-400 hover:border-indigo-500/50 hover:bg-indigo-500/10 transition-all duration-200">
+                            <i data-lucide="{{ $social['icon'] }}" class="w-4 h-4"></i>
+                        </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            {{-- Right: Contact Form --}}
+            <div class="lg:col-span-3">
+                <div class="bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-sm">
+
+                    {{-- Success Message --}}
+                    @if(session('contact_success'))
+                    <div class="flex items-start gap-3 bg-green-500/15 border border-green-500/30 text-green-300 rounded-2xl p-4 mb-6">
+                        <i data-lucide="check-circle-2" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <p class="font-semibold text-sm">Message sent successfully!</p>
+                            <p class="text-xs text-green-400 mt-0.5">Thanks {{ session('contact_name') }}, we'll get back to you shortly.</p>
+                        </div>
+                    </div>
+                    @endif
+
+                    {{-- Validation Errors --}}
+                    @if($errors->any())
+                    <div class="flex items-start gap-3 bg-red-500/15 border border-red-500/30 text-red-300 rounded-2xl p-4 mb-6">
+                        <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0 mt-0.5"></i>
+                        <ul class="text-xs space-y-1">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+
+                    <form action="{{ route('contact.send') }}" method="POST" class="space-y-5" id="contact-form">
+                        @csrf
+
+                        {{-- Name + Email Row --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                            <div>
+                                <label for="contact_name" class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Your Name</label>
+                                <div class="relative">
+                                    <i data-lucide="user" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"></i>
+                                    <input type="text" id="contact_name" name="name" required
+                                           value="{{ old('name') }}"
+                                           placeholder="Ritik Yadav"
+                                           class="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                                </div>
+                            </div>
+                            <div>
+                                <label for="contact_email" class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Email Address</label>
+                                <div class="relative">
+                                    <i data-lucide="mail" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"></i>
+                                    <input type="email" id="contact_email" name="email" required
+                                           value="{{ old('email', auth()->user()?->email) }}"
+                                           placeholder="you@example.com"
+                                           class="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Subject --}}
+                        <div>
+                            <label for="contact_subject" class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Subject</label>
+                            <div class="relative">
+                                <i data-lucide="tag" class="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"></i>
+                                <input type="text" id="contact_subject" name="subject" required
+                                       value="{{ old('subject') }}"
+                                       placeholder="What's this about?"
+                                       class="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all">
+                            </div>
+                        </div>
+
+                        {{-- Message --}}
+                        <div>
+                            <label for="contact_message" class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Message</label>
+                            <textarea id="contact_message" name="message" rows="5" required
+                                      maxlength="2000"
+                                      placeholder="Tell us how we can help you..."
+                                      class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none">{{ old('message') }}</textarea>
+                            <p class="text-xs text-gray-600 mt-1 text-right">Max 2000 characters</p>
+                        </div>
+
+                        {{-- Submit --}}
+                        <button type="submit" id="contact-submit"
+                                class="w-full py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold rounded-xl shadow-lg shadow-indigo-900/50 hover:shadow-indigo-700/50 transition-all duration-200 flex items-center justify-center gap-2 group">
+                            <i data-lucide="send" class="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
 @endsection
