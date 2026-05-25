@@ -93,7 +93,10 @@ class AdminController extends Controller
 
     public function categories()
     {
-        $categories = Category::withCount('professionals')->get();
+        $categories = Category::all()->map(function ($category) {
+            $category->professionals_count = Professional::where('category_id', $category->id)->count();
+            return $category;
+        });
         return view('admin.categories', compact('categories'));
     }
 

@@ -9,10 +9,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('appointments', function (Blueprint $table) {
-            $table->string('razorpay_order_id')->nullable()->after('fee');
-            $table->string('razorpay_payment_id')->nullable()->after('razorpay_order_id');
-            $table->string('razorpay_signature')->nullable()->after('razorpay_payment_id');
-            $table->enum('payment_status', ['pending', 'paid', 'failed', 'refunded'])->default('pending')->after('razorpay_signature');
+            $table->string('razorpay_order_id')->nullable();
+            $table->string('razorpay_payment_id')->nullable();
+            $table->string('razorpay_signature')->nullable();
+            $table->enum('payment_status', ['pending', 'paid', 'failed', 'refunded'])->default('pending');
         });
     }
 

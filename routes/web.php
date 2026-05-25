@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 // ─── Public Routes ───────────────────────────────────────────────────────────
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
+Route::post('/contact-send', [ContactController::class, 'send'])->name('contact.send');
 
 Route::get('/professionals', [ProfessionalController::class, 'index'])->name('professionals.index');
 Route::get('/professionals/{professional}', [ProfessionalController::class, 'show'])

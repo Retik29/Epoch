@@ -45,7 +45,11 @@ class ProfessionalController extends Controller
         session(['last_filters' => $request->only(['category', 'location', 'search', 'sort'])]);
 
         $professionals = $query->paginate(12)->withQueryString();
-        $categories = Category::withCount('professionals')->get();
+
+        $categories = Category::all()->map(function ($category) {
+            $category->professionals_count = Professional::where('category_id', $category->id)->count();
+            return $category;
+        });
 
         return view('professionals.index', compact('professionals', 'categories'));
     }

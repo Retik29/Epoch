@@ -11,7 +11,10 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $categories = Category::withCount('professionals')->get();
+        $categories = Category::all()->map(function ($category) {
+            $category->professionals_count = Professional::where('category_id', $category->id)->count();
+            return $category;
+        });
 
         $featuredProfessionals = Professional::with(['user', 'category'])
             ->where('is_active', true)
