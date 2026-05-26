@@ -181,7 +181,7 @@
                     <h3 class="text-xl font-bold text-slate-900 mb-2">Send us a Message</h3>
                     <p class="text-xs sm:text-sm text-slate-400 mb-8">Have a query? Please fill out the form fields. Required inputs are marked (*).</p>
 
-                    <form method="POST" action="{{ route('contact.submit') }}" class="space-y-6">
+                    <form id="contact-page-form" method="POST" action="{{ route('contact.submit') }}" class="space-y-6">
                         @csrf
 
                         <!-- Name Input -->
@@ -294,3 +294,43 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const contactForm = document.getElementById('contact-page-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function (e) {
+            const accessKey = "{{ env('WEB3FORMS_ACCESS_KEY') }}";
+            if (accessKey) {
+                e.preventDefault();
+                const form = this;
+                const submitBtn = form.querySelector('button[type="submit"]');
+                
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    const spanEl = submitBtn.querySelector('span');
+                    if (spanEl) {
+                        spanEl.innerHTML = 'Sending...';
+                    }
+                }
+
+                const formData = new FormData(form);
+                formData.append('access_key', accessKey);
+                formData.append('subject', '[Epoch Contact] ' + (formData.get('subject') || 'New Message'));
+                formData.append('from_name', 'Epoch Platform');
+
+                fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    form.submit();
+                }).catch(err => {
+                    form.submit();
+                });
+            }
+        });
+    }
+});
+</script>
+@endpush

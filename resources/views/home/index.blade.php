@@ -248,23 +248,6 @@
                     </div>
                 </div>
                 @endforeach
-
-                {{-- Social Links --}}
-                <div class="pt-2">
-                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Connect with us</p>
-                    <div class="flex gap-3">
-                        @foreach([
-                            ['icon' => 'github', 'href' => '#', 'label' => 'GitHub'],
-                            ['icon' => 'twitter', 'href' => '#', 'label' => 'Twitter'],
-                            ['icon' => 'linkedin', 'href' => '#', 'label' => 'LinkedIn'],
-                        ] as $social)
-                        <a href="{{ $social['href'] }}" aria-label="{{ $social['label'] }}"
-                           class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-indigo-400 hover:border-indigo-500/50 hover:bg-indigo-500/10 transition-all duration-200">
-                            <i data-lucide="{{ $social['icon'] }}" class="w-4 h-4"></i>
-                        </a>
-                        @endforeach
-                    </div>
-                </div>
             </div>
 
             {{-- Right: Contact Form --}}
@@ -358,3 +341,40 @@
 </section>
 
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function (e) {
+            const accessKey = "{{ env('WEB3FORMS_ACCESS_KEY') }}";
+            if (accessKey) {
+                e.preventDefault();
+                const form = this;
+                const submitBtn = document.getElementById('contact-submit');
+                
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = 'Sending...';
+                }
+
+                const formData = new FormData(form);
+                formData.append('access_key', accessKey);
+                formData.append('subject', '[Epoch Contact] ' + (formData.get('subject') || 'New Message'));
+                formData.append('from_name', 'Epoch Platform');
+
+                fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    form.submit();
+                }).catch(err => {
+                    form.submit();
+                });
+            }
+        });
+    }
+});
+</script>
+@endpush
