@@ -108,6 +108,7 @@ class Professional extends Model
         $carbon = Carbon::parse($date);
         $dayOfWeek = $carbon->dayOfWeek; // 0=Sun, 6=Sat
 
+        // Find availability for the given day of the week
         $availability = $this->availabilities()
             ->where('day_of_week', $dayOfWeek)
             ->where('is_active', true)
@@ -116,7 +117,7 @@ class Professional extends Model
         if (!$availability) {
             return [];
         }
-
+// Generate time slots based on session duration via. carbon intervals
         $slots = [];
         $duration = $this->session_duration ?: 30;
         $start = Carbon::parse($availability->start_time);
